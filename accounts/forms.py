@@ -28,9 +28,7 @@ class UserRegistrationForm(UserCreationForm):
             city = self.cleaned_data.get('city')
             street_address = self.cleaned_data.get('street_address')
             postal_code = self.cleaned_data.get('postal_code')
-            # account_type = self.cleaned_data.get('account_type')
-            # account_type = self.cleaned_data.get('account_type')
-            # account_type = self.cleaned_data.get('account_type')
+           
             UserAddress.objects.create(
                 user = our_user,
                 country = country,
@@ -48,3 +46,4 @@ class UserRegistrationForm(UserCreationForm):
             )
         return our_user
 
+# It's ok to do the same think Again and Again 
