@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from .constants import ACCOUNT_TYPE,GENDER_TYPE
+from .constants import ACCOUNT_TYPE,GENDER_TYPE 
 
 class UserBankAccount(models.Model):
     user = models.OneToOneField(User,related_name ="Account",on_delete=models.CASCADE)
