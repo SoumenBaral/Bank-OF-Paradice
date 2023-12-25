@@ -12,7 +12,12 @@
 <body class="bg-indigo-600">
     {% include 'navbar.html' %}
     {% block body %}
-
+    <div class="lg:container lg:mx-auto" id="main">
+        {% comment %} {% include 'messages.html' %} {% endcomment %}
+        {% block content %}
+        
+        {% endblock %}
+    </div>
     {% endblock %}
 </body>
 
