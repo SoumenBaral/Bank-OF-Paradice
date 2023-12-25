@@ -55,5 +55,19 @@ class UserRegistrationForm(UserCreationForm): #we Inherited the form from the Us
                 # we create a account number Automatically add the user id with a random number 
 
             )
+        
         return our_user
+    def __init__(self, *args, **kwargs):
+# The method is used to initialize the attributes or perform any setup that is necessary for instances of the class.
+        super().__init__(*args,**kwargs)
+        for field in self.fields:
+            self.fields[field].widget.attrs.update({ # we add the class for every Attribute's class 
+                'class' : (
+                    'appearance-none block w-full bg-gray-200 '
+                    'text-gray-700 border border-gray-200 rounded '
+                    'py-3 px-4 leading-tight focus:outline-none '
+                    'focus:bg-white focus:border-gray-500'
+                ) 
+            })
+   
 
