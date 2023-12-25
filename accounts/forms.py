@@ -21,11 +21,13 @@ class UserRegistrationForm(UserCreationForm): #we Inherited the form from the Us
         'city','country', 'street_address']
         # this all filed we be visible to the user . password two is the confirm Password 
     def save(self, commit=True) -> Any: 
-        # if give proper info then we give the permission to go on
-        our_user =  super().save(commit = False)
+        # if give proper info then we give the permission to go on save's default commit is true
+        # but if we want to do so more thing so we are not using default save function .
+        our_user =  super().save(commit = False)  
         # we are not interested to save the user NOW
         if (commit == True ):
-            our_user.save()
+            our_user.save() 
+            # We save user model's data save 
             account_type = self.cleaned_data.get('account_type')
             # we use clean data to get the data from database 
             gender = self.cleaned_data.get('gender')
@@ -36,8 +38,9 @@ class UserRegistrationForm(UserCreationForm): #we Inherited the form from the Us
             street_address = self.cleaned_data.get('street_address')
             postal_code = self.cleaned_data.get('postal_code')
            
-            UserAddress.objects.create(
-                user = our_user,
+            UserAddress.objects.create( # create a userAddress Objects
+
+                user = our_user, # first is form model and second is we get the data using the clear data get
                 country = country,
                 city = city, 
                 street_address = street_address,
@@ -49,6 +52,7 @@ class UserRegistrationForm(UserCreationForm): #we Inherited the form from the Us
                 gender = gender,
                 birth_date = birth_date,
                 account_no = 120000 + our_user.id
+                # we create a account number Automatically add the user id with a random number 
 
             )
         return our_user
