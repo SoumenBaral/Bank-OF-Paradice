@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block content %}
     <!-- It is for error Handling  -->
     {% if form.non_field_errors %} 
         {% for error in form.non_field_errors %}
@@ -141,5 +135,4 @@
                 </form>
             </div>
         </div>
-</body>
-</html>
+{% endblock content %}
