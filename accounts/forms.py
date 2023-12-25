@@ -16,7 +16,7 @@ class UserRegistrationForm(UserCreationForm): #we Inherited the form from the Us
     postal_code = forms.IntegerField()
     class Meta:
         model = User
-        fields = ['username', 'password1', 'password2', 'first_name',
+        fields = ['username', 'password1', 'password2', 'first_name', 
         'last_name', 'email', 'account_type', 'birth_date','gender', 'postal_code',
         'city','country', 'street_address']
         # this all filed we be visible to the user . password two is the confirm Password 
