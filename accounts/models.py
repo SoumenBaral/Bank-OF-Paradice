@@ -4,7 +4,11 @@ from .constants import ACCOUNT_TYPE,GENDER_TYPE
 
 class UserBankAccount(models.Model):
     user = models.OneToOneField(User,related_name ="Account",on_delete=models.CASCADE)
+    # this user make one to one relations with Current logged in user 
+    # we use to related name to Access user via the name Account . 
+    # we know the work of on delete  when we delete on Another will be Automatically delete 
     account_type = models.CharField(max_length=10, choices=ACCOUNT_TYPE)
+    # We use a character field as choices field and Account type come from constants 
     account_no = models.IntegerField(unique = True)
     birth_date = models.DateField(null = True,blank = True)
     gender = models.CharField(max_length=10,choices=GENDER_TYPE)
@@ -13,6 +17,7 @@ class UserBankAccount(models.Model):
 
     def __str__(self) -> str:
         return str(self.account_no)
+    #  via str function we are able to see the value on of an return element 
         
 class UserAddress(models.Model):
     user = models.OneToOneField(User,related_name ="Address",on_delete=models.CASCADE)

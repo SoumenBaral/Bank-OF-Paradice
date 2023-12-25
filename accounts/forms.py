@@ -6,8 +6,10 @@ from .constants import ACCOUNT_TYPE,GENDER_TYPE
 from .models import UserAddress,UserBankAccount
 class UserRegistrationForm(UserCreationForm):
     birth_date = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
+    # we use widget to get the date input and give the type date attrs
     gender = forms.ChoiceField(choices=GENDER_TYPE)
-    account_type = forms.ChoiceField(choices=ACCOUNT_TYPE)
+    # Instated of charfield in form we have to use ChoiceField to get the choices
+    account_type = forms.ChoiceField(choices=ACCOUNT_TYPE) 
     country = forms.CharField(max_length =100)
     city = forms.CharField(max_length= 100)
     street_address = forms.CharField(max_length= 100)
@@ -17,6 +19,7 @@ class UserRegistrationForm(UserCreationForm):
         fields = ['username', 'password1', 'password2', 'first_name',
         'last_name', 'email', 'account_type', 'birth_date','gender', 'postal_code',
         'city','country', 'street_address']
+        # this all filed we be visible to the user .
     def save(self, commit=True) -> Any:
         our_user =  super().save(commit = False)
         if (commit == True ):
@@ -46,4 +49,3 @@ class UserRegistrationForm(UserCreationForm):
             )
         return our_user
 
-# It's ok to do the same think Again and Again 
