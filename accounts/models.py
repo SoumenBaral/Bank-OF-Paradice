@@ -10,6 +10,7 @@ class UserBankAccount(models.Model):
     account_type = models.CharField(max_length=10, choices=ACCOUNT_TYPE)
     # We use a character field as choices field and Account type come from constants 
     account_no = models.IntegerField(unique = True)
+    # Account Number will be unique for every user
     birth_date = models.DateField(null = True,blank = True)
     gender = models.CharField(max_length=10,choices=GENDER_TYPE)
     initial_deposit_date = models.DateField(auto_now_add = True)
@@ -28,6 +29,8 @@ class UserAddress(models.Model):
 
     def __str__(self) -> str:
         return self.user.email
+    
+    # Str Dander Method ha ha ha 
 
 
 

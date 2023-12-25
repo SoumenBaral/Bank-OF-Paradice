@@ -4,7 +4,7 @@ from django import forms
 from django.contrib.auth.models import User
 from .constants import ACCOUNT_TYPE,GENDER_TYPE
 from .models import UserAddress,UserBankAccount
-class UserRegistrationForm(UserCreationForm):
+class UserRegistrationForm(UserCreationForm): #we Inherited the form from the UserCreation Form 
     birth_date = forms.DateField(widget=forms.DateInput(attrs={'type':'date'}))
     # we use widget to get the date input and give the type date attrs
     gender = forms.ChoiceField(choices=GENDER_TYPE)
@@ -19,13 +19,17 @@ class UserRegistrationForm(UserCreationForm):
         fields = ['username', 'password1', 'password2', 'first_name',
         'last_name', 'email', 'account_type', 'birth_date','gender', 'postal_code',
         'city','country', 'street_address']
-        # this all filed we be visible to the user .
-    def save(self, commit=True) -> Any:
+        # this all filed we be visible to the user . password two is the confirm Password 
+    def save(self, commit=True) -> Any: 
+        # if give proper info then we give the permission to go on
         our_user =  super().save(commit = False)
+        # we are not interested to save the user NOW
         if (commit == True ):
             our_user.save()
             account_type = self.cleaned_data.get('account_type')
+            # we use clean data to get the data from database 
             gender = self.cleaned_data.get('gender')
+            # get function is allow one data at a time and its have to be unique 
             birth_date = self.cleaned_data.get('birth_date')
             country = self.cleaned_data.get('country')
             city = self.cleaned_data.get('city')
