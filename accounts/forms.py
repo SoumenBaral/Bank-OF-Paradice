@@ -116,6 +116,10 @@ class UserUpdateForm(forms.ModelForm):
                 self.fields['city'].initial = user_address.city
                 self.fields['postal_code'].initial = user_address.postal_code
                 self.fields['country'].initial = user_address.country
+
+                # initial value is grab as a instance 
+
+
     def save(self, commit = True) -> Any:
         user = super().save(commit=False)
         if commit:
@@ -123,6 +127,8 @@ class UserUpdateForm(forms.ModelForm):
             user_account, created = UserBankAccount.objects.get_or_create(user=user)
             # if user is true then get the user if not  create the user 
             user_address, created = UserAddress.objects.get_or_create(user=user) 
+           
+           
             user_account.account_type = self.cleaned_data['account_type']
             user_account.gender = self.cleaned_data['gender']
             user_account.birth_date = self.cleaned_data['birth_date']
