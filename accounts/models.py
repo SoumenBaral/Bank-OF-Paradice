@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from .constants import ACCOUNT_TYPE,GENDER_TYPE 
 
 class UserBankAccount(models.Model):
-    user = models.OneToOneField(User,related_name ="Account",on_delete=models.CASCADE)
+    user = models.OneToOneField(User,related_name ="account",on_delete=models.CASCADE)
     # this user make one to one relations with Current logged in user 
     # we use to related name to Access user via the name Account . 
     # we know the work of on delete  when we delete on Another will be Automatically delete 
@@ -21,7 +21,7 @@ class UserBankAccount(models.Model):
     #  via str function we are able to see the value on of an return element 
         
 class UserAddress(models.Model):
-    user = models.OneToOneField(User,related_name ="Address",on_delete=models.CASCADE)
+    user = models.OneToOneField(User,related_name ="address",on_delete=models.CASCADE)
     country = models.CharField(max_length =100)
     city = models.CharField(max_length= 100)
     street_address = models.CharField(max_length= 100)
