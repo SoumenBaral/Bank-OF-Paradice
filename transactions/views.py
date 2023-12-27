@@ -146,24 +146,22 @@ class  PayLoanView(LoginRequiredMixin, View):
                 user_account.save()
                 loan.transaction_type = LOAN_PAID
                 loan.save()
-                return redirect('transactions:loan_list')
+                return redirect('loan_list')
             else:
                 messages.error(self.request,f"Loan amount is greater then available balance ")
 
         return redirect('loan_list')
 
-
 class LoanListView(LoginRequiredMixin,ListView):
     model = Transaction
     template_name = 'transactions/loan_request.html'
-    context_object_name = 'loans'
-
+    context_object_name = 'loans' # loan list ta ei loans context er moddhe thakbe
+    
     def get_queryset(self):
         user_account = self.request.user.account
         queryset = Transaction.objects.filter(account=user_account,transaction_type=3)
         print(queryset)
         return queryset
-
     
 
 
