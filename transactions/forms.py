@@ -1,9 +1,4 @@
-from collections.abc import Mapping
-from typing import Any
 from django import forms
-from django.core.files.base import File
-from django.db.models.base import Model
-from django.forms.utils import ErrorList 
 from .models import Transaction
 
 class TransactionForm(forms.ModelForm):
@@ -12,7 +7,7 @@ class TransactionForm(forms.ModelForm):
         fields = ['amount','transaction_type']
 
     def __init__(self,*args, **kwargs):
-        self.user_account = kwargs.pop('account') 
+        self.account = kwargs.pop('account') 
         # We get the current user Account 
         super().__init__(*args, **kwargs)
         # It calls the constructor of the parent class with the specified arguments and keyword arguments.
@@ -21,8 +16,8 @@ class TransactionForm(forms.ModelForm):
         self.fields['transaction_type'].widget = forms.HiddenInput()
         # It will be hide from the user 
 
-    def save(self, commit=True):
-            self.instance.account = self.user_account
+    def save(self,commit=True):
+            self.instance.account = self.account
             self.instance.balance_after_transaction = self.account.balance
             return super().save()
 
@@ -32,7 +27,7 @@ class DepositForm(TransactionForm):
         min_deposit_amount = 100
         amount = self.cleaned_data.get('amount')
         # we get the amount form the user fill up from 
-        if amount<min_deposit_amount: 
+        if amount < min_deposit_amount: 
             raise forms.ValidationError(
                 f'You need to deposit at least {min_deposit_amount}'
             )
@@ -40,7 +35,7 @@ class DepositForm(TransactionForm):
 
 class WithdrawForm(TransactionForm):
     def clean_amount(self):
-        account = self.user_account
+        account = self.account
         min_withdraw_amount = 500
         max_withdraw_amount = 200000
         balance = account.balance 
