@@ -7,7 +7,7 @@ from django.forms.utils import ErrorList
 from .models import Transaction
 
 class TransactionForm(forms.ModelForm):
-    class meta :
+    class Meta :
         model = Transaction
         fields = ['amount','transaction_type']
 
@@ -21,7 +21,7 @@ class TransactionForm(forms.ModelForm):
         self.fields['transaction_type'].widget = forms.HiddenInput()
         # It will be hide from the user 
 
-        def save(self, commit=True):
+    def save(self, commit=True):
             self.instance.account = self.user_account
             self.instance.balance_after_transaction = self.account.balance
             return super().save()
@@ -44,17 +44,29 @@ class WithdrawForm(TransactionForm):
         min_withdraw_amount = 500
         max_withdraw_amount = 200000
         balance = account.balance 
-        amount = self.cleaned_data.get['amount']
+        amount = self.cleaned_data.get('amount')
 
-        if amount <min_withdraw_amount:
+
+        if amount is None:
+            # Handle the case where amount is None (optional)
+            raise forms.ValidationError('Amount cannot be None')
+        
+        if amount < min_withdraw_amount:
             raise forms.ValidationError(
                 f'You can withdraw at least {min_withdraw_amount} $'
             )
 
-        if amount>balance:
+        if balance is not None and amount > balance:
             raise forms.ValidationError(
                  f'You have {balance} $ in your account. '
                 'You can not withdraw more than your account balance'
             )
         
         return amount
+
+class LoanRequestForm(TransactionForm):
+    def clean_amount(self):
+        amount = self.cleaned_data.get('amount')
+    
+        return amount
+
