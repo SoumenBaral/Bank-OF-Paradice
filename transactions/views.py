@@ -18,6 +18,7 @@ from django.template.loader import render_to_string
 
 
 
+
 class TransactionCreateMixin(LoginRequiredMixin,CreateView):
     template_name = 'transactions/transaction_form.html'
     model = Transaction
@@ -63,9 +64,8 @@ class DepositMoneyView(TransactionCreateMixin):
 
     def form_valid(self, form):
         amount = form.cleaned_data.get('amount')
-        if amount ==None:
-            amount = decimal.Decimal('0.0')
         account = self.request.user.account
+
         # if not account.initial_deposit_date:
         #     now = timezone.now()
         #     account.initial_deposit_date = now
@@ -81,8 +81,26 @@ class DepositMoneyView(TransactionCreateMixin):
             f'{"{:,.2f}".format(float(amount))}$ was deposited to your account successfully'
         )
 
-        mail_subject = 'Deposit Message '
-        message = render_to_string('transactions/deposit_email.html')
+        # mail_subject = 'Deposit Message '
+        # message = render_to_string('transactions/deposit_email.html',{
+        #    "user":self.request.user ,
+        #    'amount':amount,
+        # })
+        # to_email = self.request.user.email
+        # send_email = EmailMessage(mail_subject,message,to=[to_email])
+        # send_email.send()
+
+        mail_subject = 'Deposit Message'
+        message_content= render_to_string('transactions/deposit_email.html', {
+                "user": self.request.user,
+                "amount": amount,
+                })
+
+        to_email = self.request.user.email
+        print(to_email)
+        send_email = EmailMessage(mail_subject, message_content, to=[to_email,])
+        send_email.send()
+        
 
         return super().form_valid(form)
 
