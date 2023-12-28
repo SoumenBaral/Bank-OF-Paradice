@@ -4,6 +4,7 @@ bcrypt==3.2.0
 blinker==1.4
 Brlapi==0.8.3
 certifi==2020.6.20
+cffi==1.16.0
 chardet==4.0.0
 click==8.0.3
 colorama==0.4.4
@@ -61,6 +62,7 @@ psycopg2==2.9.9
 ptyprocess==0.7.0
 PyAutoGUI==0.9.54
 pycairo==1.20.1
+pycparser==2.21
 pycups==2.0.1
 PyGetWindow==0.0.9
 PyGObject==3.42.1
