@@ -1,3 +1,4 @@
+from email import message
 from typing import Any
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -13,10 +14,17 @@ from datetime import datetime
 from django.db.models import Sum
 from transactions.models import Transaction
 from transactions.forms import (DepositForm,WithdrawForm, LoanRequestForm,)
-from django.core.mail import EmailMessage
+from django.core.mail import EmailMessage,EmailMultiAlternatives
 from django.template.loader import render_to_string
 
-
+def send_Mail(user,amount,mail_subject,template):
+        message= render_to_string(template, {
+                "user": user,
+                "amount": amount,
+            })
+        send_email =EmailMultiAlternatives(mail_subject,"", to=[user.email])
+        send_email.attach_alternative(message,'text/html')
+        send_email.send()
 
 
 class TransactionCreateMixin(LoginRequiredMixin,CreateView):
@@ -52,6 +60,7 @@ class WithdrawMoneyView(TransactionCreateMixin):
         self.request.user.account.balance -= amount
         self.request.user.account.save(update_fields=['balance'])
         messages.success(self.request, f'Successfully withdrawn {"{:,.2f}".format(float(amount))}$ from your account')
+        send_Mail(self.request.user,amount,'Withdrawal Message','transactions/withdrawal_email.html')
         return super().form_valid(form)
 
 class DepositMoneyView(TransactionCreateMixin):
@@ -90,16 +99,19 @@ class DepositMoneyView(TransactionCreateMixin):
         # send_email = EmailMessage(mail_subject,message,to=[to_email])
         # send_email.send()
 
-        mail_subject = 'Deposit Message'
-        message_content= render_to_string('transactions/deposit_email.html', {
-                "user": self.request.user,
-                "amount": amount,
-                })
+        # mail_subject = 'Deposit Message'
+        # message= render_to_string('transactions/deposit_email.html', {
+        #         "user": self.request.user,
+        #         "amount": amount,
+        #         })
 
-        to_email = self.request.user.email
-        print(to_email)
-        send_email = EmailMessage(mail_subject, message_content, to=[to_email,])
-        send_email.send()
+        # to_email = self.request.user.email
+        # print(to_email)
+
+        # send_email =EmailMultiAlternatives(mail_subject,"", to=[to_email,])
+        # send_email.attach_alternative(message,'text/html')
+        # send_email.send()
+        send_Mail(self.request.user,amount,'Deposit Message','transactions/deposit_email.html')
         
 
         return super().form_valid(form)
