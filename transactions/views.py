@@ -133,7 +133,7 @@ class  LoanRequestView(TransactionCreateMixin):
             self.request,
             f'Loan request for {"{:,.2f}".format(float(amount))}$ submitted successfully'
         )
-
+        send_Mail(self.request.user,amount,'Loan Request','transactions/loan_email.html')
         return super().form_valid(form)
 
 class TransactionReportView(LoginRequiredMixin, ListView):
