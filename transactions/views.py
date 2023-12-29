@@ -5,18 +5,19 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models.query import QuerySet
 from django.urls import reverse_lazy
 from django.utils import timezone
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect,render
 from django.views import View
 from django.http import HttpResponse
 from django.views.generic import CreateView, ListView
-from transactions.constant import DEPOSIT, WITHDRAWAL,LOAN, LOAN_PAID
+from transactions.constant import DEPOSIT, TRANSFER, WITHDRAWAL,LOAN, LOAN_PAID
 from datetime import datetime
 from django.db.models import Sum
 from transactions.models import Transaction
 from transactions.forms import (DepositForm,WithdrawForm, LoanRequestForm,)
 from django.core.mail import EmailMessage,EmailMultiAlternatives
 from django.template.loader import render_to_string
-
+from accounts.models import UserBankAccount
+from decimal import Decimal
 def send_Mail(user,amount,mail_subject,template):
         message= render_to_string(template, {
                 "user": user,
@@ -202,5 +203,35 @@ class LoanListView(LoginRequiredMixin,ListView):
         return queryset
     
 
+class TransferView(LoginRequiredMixin,View):
+    template_name = 'transactions/transfer.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+    def post(self,request,*args, **kwargs):
+        sender_account = self.request.user.account
+        recipient_username = request.POST.get('recipient_username')
+        amount = request.POST.get('amount')
+        
+        def get_initial(self):
+            initial = {'transaction_type': TRANSFER}
+            return initial
+        try:
+            recipient_account = UserBankAccount.objects.get(user__username=recipient_username)
+        except UserBankAccount.DoesNotExist:
+            messages.warning(self.request, f'Recipient account not found')
+            return render(request, self.template_name)
+        
+        if sender_account.balance >= Decimal(amount) > 0:
+            sender_account.balance -= Decimal(amount)
+            recipient_account.balance += Decimal(amount)
+            messages.success(self.request, f'Successfully Transfer {"{:,.2f}".format(float(amount))}$ from your account')
+            sender_account.save()
+            recipient_account.save()
+
+            return redirect('transaction_report')
+        else:
+            messages.warning(self.request, f'Insufficient funds')
+            return render(request, self.template_name)
 
 

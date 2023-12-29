@@ -1,0 +1,38 @@
+<!-- transfer_money.html -->
+{% extends 'base.html' %} 
+{% block head_title %}
+    {{ title }}
+{% endblock %} 
+{% block content %}
+
+<div class="w-full flex mt-5 justify-center ">
+    <div class="bg-white w-5/12 rounded-lg">
+        <h3 class = 'text-center mt-4 text-xl text-orange-600 font-bold'>Transter Your Money</h3>
+        <form method="post" action="{% url 'transfer_money' %}" class="px-8 pt-6 pb-8 mb-4">
+            {% csrf_token %}
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="recipient_username">
+                    Recipient Username
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight border rounded-md border-gray-500 focus:outline-none focus:shadow-outline" name="recipient_username" id="amount" type="text" required placeholder="Reciver User Name">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="amount">
+                    Amount
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight border rounded-md border-gray-500 focus:outline-none focus:shadow-outline" name="amount" id="amount" type="number" required placeholder="Amount">
+            </div>
+          
+            <div class="flex w-full justify-center">
+                <button class="bg-blue-900 text-white hover:text-blue-900 hover:bg-white border border-blue-900 font-bold px-4 py-2 rounded-lg" type="submit">
+                    Transfer Money
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+
+{% endblock %}
