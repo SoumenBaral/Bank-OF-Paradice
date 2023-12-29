@@ -4,6 +4,7 @@ from .forms import UserRegistrationForm,UserUpdateForm
 from django.contrib.auth import login,logout
 from django.urls import reverse_lazy
 from django.contrib import messages
+from transactions.views import send_Mail
 from django.contrib.auth.views import LogoutView,LoginView,PasswordChangeView
 # Create your views here.
 
@@ -47,6 +48,8 @@ class UserBankAccountUpdateView(View):
     
 class PassWordChange(PasswordChangeView):
     template_name = 'accounts/passWordChange.html'
+
     def get_success_url(self):
+       send_Mail(self.request.user,0,'Password Change  Message','accounts/passChangeEmail.html')
        messages.success(self.request, "You have been successfully Change your PassWord.")
        return reverse_lazy('profile')
