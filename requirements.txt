@@ -11,7 +11,7 @@ colorama
 
 crispy-bootstrap5
 cryptography
-
+cupshelpers
 dbus-python
 defer
 distlib
