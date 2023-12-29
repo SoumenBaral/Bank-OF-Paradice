@@ -3,7 +3,8 @@ from django.views.generic import FormView,View
 from .forms import UserRegistrationForm,UserUpdateForm
 from django.contrib.auth import login,logout
 from django.urls import reverse_lazy
-from django.contrib.auth.views import LogoutView,LoginView
+from django.contrib import messages
+from django.contrib.auth.views import LogoutView,LoginView,PasswordChangeView
 # Create your views here.
 
 class UserRegistrationView(FormView):
@@ -43,3 +44,9 @@ class UserBankAccountUpdateView(View):
             form.save()
             return redirect('profile')  # Redirect to the user's profile page
         return render(request, self.template_name, {'form': form})
+    
+class PassWordChange(PasswordChangeView):
+    template_name = 'accounts/passWordChange.html'
+    def get_success_url(self):
+       messages.success(self.request, "You have been successfully Change your PassWord.")
+       return reverse_lazy('profile')
