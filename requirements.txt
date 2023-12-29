@@ -2,7 +2,7 @@
 asgiref
 bcrypt
 blinker
-Brlapi
+
 certifi
 cffi
 chardet
