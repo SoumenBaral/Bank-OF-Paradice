@@ -1,10 +1,7 @@
-from email import message
 from typing import Any
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models.query import QuerySet
 from django.urls import reverse_lazy
-from django.utils import timezone
 from django.shortcuts import get_object_or_404, redirect,render
 from django.views import View
 from django.http import HttpResponse
@@ -14,10 +11,13 @@ from datetime import datetime
 from django.db.models import Sum
 from transactions.models import Transaction
 from transactions.forms import (DepositForm,WithdrawForm, LoanRequestForm,)
-from django.core.mail import EmailMessage,EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from accounts.models import UserBankAccount
 from decimal import Decimal
+from accounts.models import isBankCraft
+
+
 def send_Mail(user,amount,mail_subject,template):
         message= render_to_string(template, {
                 "user": user,
@@ -26,6 +26,8 @@ def send_Mail(user,amount,mail_subject,template):
         send_email =EmailMultiAlternatives(mail_subject,"", to=[user.email])
         send_email.attach_alternative(message,'text/html')
         send_email.send()
+
+
 
 
 class TransactionCreateMixin(LoginRequiredMixin,CreateView):
@@ -48,6 +50,9 @@ class TransactionCreateMixin(LoginRequiredMixin,CreateView):
         })
         return context
 
+
+
+
 class WithdrawMoneyView(TransactionCreateMixin):
     form_class = WithdrawForm
     title = 'Withdraw Mony'
@@ -57,11 +62,16 @@ class WithdrawMoneyView(TransactionCreateMixin):
         return initial
     
     def form_valid(self, form):
-        amount = form.cleaned_data.get('amount')
-        self.request.user.account.balance -= amount
-        self.request.user.account.save(update_fields=['balance'])
-        messages.success(self.request, f'Successfully withdrawn {"{:,.2f}".format(float(amount))}$ from your account')
-        send_Mail(self.request.user,amount,'Withdrawal Message','transactions/withdrawal_email.html')
+        if isBankCraft.objects.filter(Is_Bank_Craft=True).exists():
+            messages.success(self.request, 'Your Bank is Bankrupt You can not Withdraw')
+            
+
+        else:
+            amount = form.cleaned_data.get('amount')
+            self.request.user.account.balance -= amount
+            self.request.user.account.save(update_fields=['balance'])
+            messages.success(self.request, f'Successfully withdrawn {"{:,.2f}".format(float(amount))}$ from your account')
+            send_Mail(self.request.user,amount,'Withdrawal Message','transactions/withdrawal_email.html')
         return super().form_valid(form)
 
 class DepositMoneyView(TransactionCreateMixin):
@@ -76,10 +86,7 @@ class DepositMoneyView(TransactionCreateMixin):
         amount = form.cleaned_data.get('amount')
         account = self.request.user.account
 
-        # if not account.initial_deposit_date:
-        #     now = timezone.now()
-        #     account.initial_deposit_date = now
-        account.balance += amount # amount = 200, tar ager balance = 0 taka new balance = 0+200 = 200
+        account.balance += amount 
         account.save(
             update_fields=[
                 'balance'
@@ -91,27 +98,7 @@ class DepositMoneyView(TransactionCreateMixin):
             f'{"{:,.2f}".format(float(amount))}$ was deposited to your account successfully'
         )
 
-        # mail_subject = 'Deposit Message '
-        # message = render_to_string('transactions/deposit_email.html',{
-        #    "user":self.request.user ,
-        #    'amount':amount,
-        # })
-        # to_email = self.request.user.email
-        # send_email = EmailMessage(mail_subject,message,to=[to_email])
-        # send_email.send()
-
-        # mail_subject = 'Deposit Message'
-        # message= render_to_string('transactions/deposit_email.html', {
-        #         "user": self.request.user,
-        #         "amount": amount,
-        #         })
-
-        # to_email = self.request.user.email
-        # print(to_email)
-
-        # send_email =EmailMultiAlternatives(mail_subject,"", to=[to_email,])
-        # send_email.attach_alternative(message,'text/html')
-        # send_email.send()
+       
         send_Mail(self.request.user,amount,'Deposit Message','transactions/deposit_email.html')
         
 
@@ -206,16 +193,16 @@ class LoanListView(LoginRequiredMixin,ListView):
 class TransferView(LoginRequiredMixin,View):
     template_name = 'transactions/transfer.html'
 
+   
     def get(self, request, *args, **kwargs):
         return render(request, self.template_name)
+    
     def post(self,request,*args, **kwargs):
         sender_account = self.request.user.account
         recipient_username = request.POST.get('recipient_username')
         amount = request.POST.get('amount')
         
-        def get_initial(self):
-            initial = {'transaction_type': TRANSFER}
-            return initial
+    
         try:
             recipient_account = UserBankAccount.objects.get(user__username=recipient_username)
         except UserBankAccount.DoesNotExist:
@@ -229,7 +216,7 @@ class TransferView(LoginRequiredMixin,View):
             sender_account.save()
             recipient_account.save()
 
-            return redirect('transaction_report')
+            return redirect('transfer_money')
         else:
             messages.warning(self.request, f'Insufficient funds')
             return render(request, self.template_name)
