@@ -212,7 +212,14 @@ class TransferView(LoginRequiredMixin,View):
         if sender_account.balance >= Decimal(amount) > 0:
             sender_account.balance -= Decimal(amount)
             recipient_account.balance += Decimal(amount)
+
             messages.success(self.request, f'Successfully Transfer {"{:,.2f}".format(float(amount))}$ from your account')
+            
+            if sender_account:
+                send_Mail(sender_account.user,amount,'Transfer  Message','transactions/sender_email.html')
+            if recipient_account:
+                send_Mail(recipient_account.user,amount,'Transfer  Message','transactions/reciver_email.html')
+                
             sender_account.save()
             recipient_account.save()
 
