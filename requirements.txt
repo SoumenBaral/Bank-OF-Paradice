@@ -1,4 +1,4 @@
-apturl
+
 asgiref
 bcrypt
 blinker
