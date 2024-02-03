@@ -4,8 +4,6 @@ from pyexpat import model
 from django.db import models
 from django.contrib.auth.models import User
 from decimal import Decimal
-
-from numpy import False_
 from .constants import ACCOUNT_TYPE,GENDER_TYPE 
 
 class UserBankAccount(models.Model):
