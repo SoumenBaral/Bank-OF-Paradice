@@ -19,11 +19,15 @@ class UserRegistrationView(FormView):
         return super().form_valid(form)
 
 
-class UserLogOutView(LogoutView):
-    def get_success_url(self):
-        if self.request.user.is_authenticated:
-            logout(self.request)
-        return reverse_lazy('login')
+# class UserLogOutView(LogoutView):
+#     def get_success_url(self):
+#         if self.request.user.is_authenticated:
+#             logout(self.request)
+#         return reverse_lazy('login')
+
+def UserLogOut(request):
+    logout(request)
+    return redirect('login')
 
 class UserLoginView(LoginView):
     template_name = 'accounts/user_login.html'
